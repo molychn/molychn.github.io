@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
+<meta name="description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：">
 <meta name="keywords" content="javascript,babel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="认识Babel">
 <meta property="og:url" content="http://yoursite.com/2019/04/16/认识Babel/index.html">
 <meta property="og:site_name" content="Molychn`s Blog">
-<meta property="og:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
+<meta property="og:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-16T06:15:15.968Z">
+<meta property="og:updated_time" content="2019-04-16T06:16:33.213Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="认识Babel">
-<meta name="twitter:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
+<meta name="twitter:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：">
 
 
 
@@ -298,7 +298,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-16T14:15:15+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-16T14:16:33+08:00">
                 2019-04-16
               </time>
             
@@ -354,7 +354,7 @@
       
 
       
-        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="params">n</span> =&gt;</span> n * n</span><br><span class="line"><span class="comment">// transform</span></span><br><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n * n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：<br><a id="more"></a><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="params">n</span> =&gt;</span> n * n</span><br><span class="line"><span class="comment">// transform</span></span><br><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n * n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>同时对于框架的使用也使得其语法上得以转化</p>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a><a href="http://babeljs.io/docs/setup" target="_blank" rel="noopener">安装</a></h2><h3 id="全局安装"><a href="#全局安装" class="headerlink" title="全局安装"></a>全局安装</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i babel-cli -g</span><br></pre></td></tr></table></figure>
 <p>CLI安装可以让用户使用命令行完成代码的编译，如编译一个文件：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将源码编译输出新文件compiled.js</span></span><br><span class="line">babel source.js --out-file(可简写成-o) compiled.js</span><br></pre></td></tr></table></figure></p>
