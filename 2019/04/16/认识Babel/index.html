@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="javascript,babel,">
 
 
 
@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="molychn">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Molychn`s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
+<meta name="keywords" content="javascript,babel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="认识Babel">
+<meta property="og:url" content="http://yoursite.com/2019/04/16/认识Babel/index.html">
 <meta property="og:site_name" content="Molychn`s Blog">
-<meta property="og:description" content="molychn">
+<meta property="og:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-16T06:15:15.968Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Molychn`s Blog">
-<meta name="twitter:description" content="molychn">
+<meta name="twitter:title" content="认识Babel">
+<meta name="twitter:description" content="介绍使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：12345const pow = n =&amp;gt; n * n// transformconst pow = function (n) &amp;#123;    return n * n&amp;#125; 同时对于框架的使用也使得其语法上得以转化 安装全局安装1npm i babel-cli -g CLI">
 
 
 
@@ -118,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/04/16/认识Babel/">
 
 
 
 
 
-  <title>Molychn`s Blog</title>
+  <title>认识Babel | Molychn`s Blog</title>
   
 
 
@@ -143,8 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -237,9 +238,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -269,9 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/16/认识Babel/" itemprop="url">认识Babel</a></h1>
+          <h1 class="post-title" itemprop="name headline">认识Babel</h1>
         
 
         <div class="post-meta">
@@ -355,9 +354,7 @@
       
 
       
-        
-          
-            <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="params">n</span> =&gt;</span> n * n</span><br><span class="line"><span class="comment">// transform</span></span><br><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n * n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用Babel编译未来的JavaScript（下称js）使得可以提前使用js新特性，例如箭头函数的使用：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="params">n</span> =&gt;</span> n * n</span><br><span class="line"><span class="comment">// transform</span></span><br><span class="line"><span class="keyword">const</span> pow = <span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n * n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>同时对于框架的使用也使得其语法上得以转化</p>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a><a href="http://babeljs.io/docs/setup" target="_blank" rel="noopener">安装</a></h2><h3 id="全局安装"><a href="#全局安装" class="headerlink" title="全局安装"></a>全局安装</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i babel-cli -g</span><br></pre></td></tr></table></figure>
 <p>CLI安装可以让用户使用命令行完成代码的编译，如编译一个文件：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将源码编译输出新文件compiled.js</span></span><br><span class="line">babel source.js --out-file(可简写成-o) compiled.js</span><br></pre></td></tr></table></figure></p>
@@ -406,8 +403,6 @@
 <li><a href="https://github.com/babel/babel" target="_blank" rel="noopener">Babel Github</a></li>
 </ul>
 
-          
-        
       
     </div>
     
@@ -422,172 +417,38 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/11/认识Promise/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Molychn">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Molychn`s Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/04/11/认识Promise/" itemprop="url">认识Promise</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-11T20:45:46+08:00">
-                2019-04-11
-              </time>
-            
-
-            
-              <span class="post-meta-divider">|</span>
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-check-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">更新于&#58;</span>
-              
-              <time title="更新于" itemprop="dateModified" datetime="2019-04-12T10:43:41+08:00">
-                2019-04-12
-              </time>
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Javascript/" itemprop="url" rel="index">
-                    <span itemprop="name">Javascript</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/javascript/" rel="tag"><i class="fa fa-tag"></i> javascript</a>
           
-
+            <a href="/tags/babel/" rel="tag"><i class="fa fa-tag"></i> babel</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          <p>Promise提供两个参数，而这两个参数都是函数，用于在Promise内部调用，它们被称为执行器。resolve函数在于内部异步操作成功时调用，reject则相反。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/04/11/认识Promise/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/认识Promise/" rel="next" title="认识Promise">
+                <i class="fa fa-chevron-left"></i> 认识Promise
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </p></div>
-    
-    
-    
 
-    
+          <span class="post-nav-divider"></span>
 
-    
-
-    
-
-    <footer class="post-footer">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -597,10 +458,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -608,6 +470,15 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MzY5MS8yMDIzMQ=="></div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -628,8 +499,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -689,6 +569,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#全局安装"><span class="nav-number">2.1.</span> <span class="nav-text">全局安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在项目中安装babel-cli"><span class="nav-number">2.2.</span> <span class="nav-text">在项目中安装babel-cli</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在项目中安装babel-register"><span class="nav-number">2.3.</span> <span class="nav-text">在项目中安装babel-register</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#babel-core"><span class="nav-number">3.</span> <span class="nav-text">babel-core</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#babelrc"><span class="nav-number">4.</span> <span class="nav-text">.babelrc</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加预设"><span class="nav-number">4.0.1.</span> <span class="nav-text">添加预设</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加插件"><span class="nav-number">4.0.2.</span> <span class="nav-text">添加插件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于环境自定义"><span class="nav-number">4.1.</span> <span class="nav-text">基于环境自定义</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#babel-polyfill"><span class="nav-number">5.</span> <span class="nav-text">babel-polyfill</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用方式"><span class="nav-number">5.1.</span> <span class="nav-text">使用方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#babel-runtime"><span class="nav-number">6.</span> <span class="nav-text">babel-runtime</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用方式-1"><span class="nav-number">6.1.</span> <span class="nav-text">使用方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他运用与工具搭配"><span class="nav-number">7.</span> <span class="nav-text">其他运用与工具搭配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在浏览器环境使用Babel"><span class="nav-number">7.1.</span> <span class="nav-text">在浏览器环境使用Babel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码风格检测"><span class="nav-number">7.2.</span> <span class="nav-text">代码风格检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">7.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">8.</span> <span class="nav-text">参考链接</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -822,6 +718,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
@@ -850,6 +750,17 @@
 
 
 
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
   
 
 
