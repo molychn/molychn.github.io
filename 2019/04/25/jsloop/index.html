@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,basic,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="之前业务代码中遍历循环一把梭哈for循环就是干，纠结于写出优雅的代码，励志从“搬砖的”码农进化到“和水泥”的（水泥用于在砖缝之间将各个砖头连接起来，自认为写出好的代码也是将自身的各项编码实力连接起来），先总结一波关于js中的循环与遍历，以后有新的再补充。">
+<meta name="keywords" content="javascript,basic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript中的循环与遍历">
+<meta property="og:url" content="http://yoursite.com/2019/04/25/jsloop/index.html">
+<meta property="og:site_name" content="Molychn`s Blog">
+<meta property="og:description" content="之前业务代码中遍历循环一把梭哈for循环就是干，纠结于写出优雅的代码，励志从“搬砖的”码农进化到“和水泥”的（水泥用于在砖缝之间将各个砖头连接起来，自认为写出好的代码也是将自身的各项编码实力连接起来），先总结一波关于js中的循环与遍历，以后有新的再补充。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/04/25/jsloop/suoha.png">
+<meta property="og:updated_time" content="2019-04-25T07:28:15.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript中的循环与遍历">
+<meta name="twitter:description" content="之前业务代码中遍历循环一把梭哈for循环就是干，纠结于写出优雅的代码，励志从“搬砖的”码农进化到“和水泥”的（水泥用于在砖缝之间将各个砖头连接起来，自认为写出好的代码也是将自身的各项编码实力连接起来），先总结一波关于js中的循环与遍历，以后有新的再补充。">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/25/jsloop/suoha.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/25/jsloop/">
+
+
+
+
+
+  <title>JavaScript中的循环与遍历 | Molychn`s Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Molychn`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">molychn的个人站点</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/25/jsloop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Molychn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Molychn`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaScript中的循环与遍历</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-25T15:20:53+08:00">
+                2019-04-25
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-04-25T15:28:15+08:00">
+                2019-04-25
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前业务代码中遍历循环一把梭哈for循环就是干，纠结于写出优雅的代码，励志从“搬砖的”码农进化到“和水泥”的（水泥用于在砖缝之间将各个砖头连接起来，自认为写出好的代码也是将自身的各项编码实力连接起来），先总结一波关于js中的循环与遍历，以后有新的再补充。<br><img src="/2019/04/25/jsloop/suoha.png" alt="image"><br><a id="more"></a></p>
+<h2 id="原生JS循环与遍历"><a href="#原生JS循环与遍历" class="headerlink" title="原生JS循环与遍历"></a>原生JS循环与遍历</h2><h3 id="while"><a href="#while" class="headerlink" title="while"></a>while</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (condition) statement</span><br></pre></td></tr></table></figure>
+<p>只要condition满足条件则会一直执行while代码块里的statement语句，所以在块内会进行状态的改变，从而终止循环</p>
+<h3 id="do-while"><a href="#do-while" class="headerlink" title="do while"></a>do while</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> statement <span class="keyword">while</span> (condition)</span><br></pre></td></tr></table></figure>
+<p>相比较while循环，do…while循环需要先执行do代码块中的语句一次而后再开始循环</p>
+<h3 id="for"><a href="#for" class="headerlink" title="for"></a>for</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (definition; condition; statement) statement</span><br></pre></td></tr></table></figure>
+<p>for循环中主要根据中间的条件语句实现循环，每次循环执行后面代码块的语句，而后有第三个参数控制整个循环的状态，一般是自增以达到突破条件从而终止循环。在循环过程中，<strong><em>continue</em></strong>，<strong><em>return</em></strong>，<strong><em>break</em></strong>都会终止循环或跳过当前循环进入下一次。关于for循环会经常联系作用域出面试题：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(i);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为setTimeout的原因导致了作用域的改变（遇setTimeout宏任务会先暂停执行，等上一次的宏任务与微任务执行完成后执行），从而输出的i值全部都是全局作用域的值5，而且这里会得到5的原因在于for循环执行完毕后依旧会执行第三个语句参数，即i++。解题方法有几种，一是替换i的定义从var到let，因为let是自形成一个代码块；或者是实现一个立即执行函数，同时将i传递进去，每次传入的i值得以保存在该函数的作用域内。</p>
+<p>关于传递i值，如果直接在setTimeout上传递i，则默认会因为循环结束后获取不到全局的i变量从而得到undefined的结果</p>
+<h3 id="for…in…"><a href="#for…in…" class="headerlink" title="for…in…"></a>for…in…</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> obj)</span><br></pre></td></tr></table></figure>
+<p>forin循环直接针对对象进行遍历，它的结果根据key-&gt;value格式输出。forin的遍历不仅将自身的可枚举属性遍历出来，还包括其原型链上的可枚举属性，因此对于自身可枚举的属性可以搭配hasOwnProperty方法食用更佳。</p>
+<h3 id="for…of…"><a href="#for…of…" class="headerlink" title="for…of…"></a>for…of…</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (variable <span class="keyword">of</span> iterable) statement</span><br></pre></td></tr></table></figure>
+<p>for…of 语句创建一个循环来迭代可迭代的对象。在 ES6 中引入的 for…of 循环，以替代 for…in 和 forEach() ，并支持新的迭代协议。for…of 允许你遍历 Arrays（数组）, Strings（字符串）, Maps（映射）, Sets（集合）等可迭代的数据结构等。<br>ES6中的Generators(生成器)所生成的可迭代函数也可以被遍历，而普通的对象却不可迭代。</p>
+<p>JavaScript 提供了四种已知的终止循环执行的方法：break、continue、return 和 throw。</p>
+<h3 id="Object-keys"><a href="#Object-keys" class="headerlink" title="Object.keys"></a>Object.keys</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.keys(obj)</span><br></pre></td></tr></table></figure>
+<p>相比forin循环，Object.keys的遍历会返回一个数组，该数组成员都是该对象可枚举的属性名。而Object.getOwnPropertyNames可以返回自身对象所有属性名，包括不可枚举。</p>
+<h2 id="数组遍历"><a href="#数组遍历" class="headerlink" title="数组遍历"></a>数组遍历</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">array.forEach(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br><span class="line"><span class="comment">// &amp;&amp;</span></span><br><span class="line">array.map(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br></pre></td></tr></table></figure>
+<p>遍历数组元素并执行一些操作，使用forEach或map都可以做到，区别在于map除了执行语句外，可以return回一个经过执行语句处理过的数组，而forEach即使return了也没用。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array.filter(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br></pre></td></tr></table></figure></p>
+<p>看方法名叫filter就知道它是数组过滤的方法，可以返回数组中符合条件的元素，生成新数组，并不会修改原数组。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">array.some(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br><span class="line"><span class="comment">// &amp;&amp;</span></span><br><span class="line">array.every(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br><span class="line"><span class="comment">// &amp;&amp;</span></span><br><span class="line">array.find(<span class="function"><span class="params">item</span> =&gt;</span> statement)</span><br></pre></td></tr></table></figure></p>
+<p>some遍历是只要在遍历过程中发现存在符合条件的结果就返回true，并不会再往下遍历；而every则与之相反，需要对整个数组内的元素进行遍历才能得到结果;find的过程与some类似，只要找到第一个符合条件的就返回，但相比some返回true，find会返回符合条件的那个元素，而如果使用findIndex方法的话相比find返回元素，它会返回元素在原数组中的索引值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array.reduce(<span class="function">(<span class="params">accumulator, currentValue[, currentIndex, sourceArr]</span>) =&gt;</span> statement, pre)</span><br></pre></td></tr></table></figure></p>
+<p>reduce的参数比较多，方法可以传递两个参数，第一个为函数回调，第二个为执行reduce第一次预先传递进去的值。在回调函数中，第一个表示上次结果中累计的值，第二个位当前值，第三为当前索引，第四为原数组。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"><i class="fa fa-tag"></i> javascript</a>
+          
+            <a href="/tags/basic/" rel="tag"><i class="fa fa-tag"></i> basic</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/18/new/" rel="next" title="new的实现">
+                <i class="fa fa-chevron-left"></i> new的实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MzY5MS8yMDIzMQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Molychn</p>
+              <p class="site-description motion-element" itemprop="description">molychn</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原生JS循环与遍历"><span class="nav-number">1.</span> <span class="nav-text">原生JS循环与遍历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#while"><span class="nav-number">1.1.</span> <span class="nav-text">while</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#do-while"><span class="nav-number">1.2.</span> <span class="nav-text">do while</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for"><span class="nav-number">1.3.</span> <span class="nav-text">for</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for…in…"><span class="nav-number">1.4.</span> <span class="nav-text">for…in…</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for…of…"><span class="nav-number">1.5.</span> <span class="nav-text">for…of…</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-keys"><span class="nav-number">1.6.</span> <span class="nav-text">Object.keys</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组遍历"><span class="nav-number">2.</span> <span class="nav-text">数组遍历</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Molychn</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
