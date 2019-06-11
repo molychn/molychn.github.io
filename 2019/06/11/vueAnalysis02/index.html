@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,Vue,source,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="new一个Vue实例在实践过程中最简单的例子就是在一个html中引入Vue的CDN资源，然后在页面中new一个Vue实例对象。但是在大多数开发中，会使用cli脚手架集成开发，cli集成webpack、eslint、babel等前端JS工具，在编码 编译、书写规范、打包压缩环节省了很大一部分力气。">
+<meta name="keywords" content="javascript,Vue,source">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue源码学习02：实例化与其中的mergeOption">
+<meta property="og:url" content="http://yoursite.com/2019/06/11/vueAnalysis02/index.html">
+<meta property="og:site_name" content="Molychn`s Blog">
+<meta property="og:description" content="new一个Vue实例在实践过程中最简单的例子就是在一个html中引入Vue的CDN资源，然后在页面中new一个Vue实例对象。但是在大多数开发中，会使用cli脚手架集成开发，cli集成webpack、eslint、babel等前端JS工具，在编码 编译、书写规范、打包压缩环节省了很大一部分力气。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-11T09:42:51.577Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue源码学习02：实例化与其中的mergeOption">
+<meta name="twitter:description" content="new一个Vue实例在实践过程中最简单的例子就是在一个html中引入Vue的CDN资源，然后在页面中new一个Vue实例对象。但是在大多数开发中，会使用cli脚手架集成开发，cli集成webpack、eslint、babel等前端JS工具，在编码 编译、书写规范、打包压缩环节省了很大一部分力气。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/11/vueAnalysis02/">
+
+
+
+
+
+  <title>Vue源码学习02：实例化与其中的mergeOption | Molychn`s Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Molychn`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">molychn的个人站点</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/11/vueAnalysis02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Molychn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Molychn`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue源码学习02：实例化与其中的mergeOption</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-11T17:34:41+08:00">
+                2019-06-11
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-11T17:42:51+08:00">
+                2019-06-11
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/计算机科学/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机科学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="new一个Vue实例"><a href="#new一个Vue实例" class="headerlink" title="new一个Vue实例"></a>new一个Vue实例</h4><p>在实践过程中最简单的例子就是在一个html中引入Vue的CDN资源，然后在页面中new一个Vue实例对象。但是在大多数开发中，会使用cli脚手架集成开发，cli集成webpack、eslint、babel等前端JS工具，在编码 编译、书写规范、打包压缩环节省了很大一部分力气。<br><a id="more"></a><br>扯回正题，在新生成的cli项目中，<strong>src/</strong>里的main.js文件为整套脚手架的入口：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">'babel-polyfill'</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">'./App'</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">'#app'</span>,</span><br><span class="line">  components: &#123; App &#125;,</span><br><span class="line">  template: <span class="string">'&lt;App/&gt;'</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>从前文的Vue构造函数源码中知道，实例化主要执行this._init()方法：</p>
+<ol>
+<li><p>uid最初为0，在项目是使用中根据实例化逐渐递增。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vm._uid = uid++ <span class="comment">// 设置uid</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据config配置中的performance参数决定是否开启性能检测，</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">  startTag = <span class="string">`vue-perf-start:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">  endTag = <span class="string">`vue-perf-end:<span class="subst">$&#123;vm._uid&#125;</span>`</span></span><br><span class="line">  mark(startTag)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span> &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">  vm._name = formatComponentName(vm, <span class="literal">false</span>)</span><br><span class="line">  mark(endTag)</span><br><span class="line">  measure(<span class="string">`vue <span class="subst">$&#123;vm._name&#125;</span> init`</span>, startTag, endTag)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>开启性能检测的情况会记录这两段代码中间所执行操作的时间。</p>
+<h5 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Performance" target="_blank" rel="noopener">Performance</a></h5><p>performance可以获取当前页面与性能相关的信息，可以通过window.performace来获取，在Vue源码中主要用到该对象相对应的mark/clearMarks与measure/clearMeasures方法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> perf = inBrowser &amp;&amp; <span class="built_in">window</span>.performance</span><br><span class="line">  <span class="comment">/* istanbul ignore if */</span></span><br><span class="line">  <span class="keyword">if</span> (</span><br><span class="line">    perf &amp;&amp;</span><br><span class="line">    perf.mark &amp;&amp;</span><br><span class="line">    perf.measure &amp;&amp;</span><br><span class="line">    perf.clearMarks &amp;&amp;</span><br><span class="line">    perf.clearMeasures</span><br><span class="line">  ) &#123;</span><br><span class="line">    mark = <span class="function"><span class="params">tag</span> =&gt;</span> perf.mark(tag)</span><br><span class="line">    measure = <span class="function">(<span class="params">name, startTag, endTag</span>) =&gt;</span> &#123;</span><br><span class="line">      perf.measure(name, startTag, endTag)</span><br><span class="line">      perf.clearMarks(startTag)</span><br><span class="line">      perf.clearMarks(endTag)</span><br><span class="line">      <span class="comment">// perf.clearMeasures(name)</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>更详细的performance使用我找了其他的资料，了解与实践后再出文章。</p>
+<ol start="3">
+<li>其中两段性能检测的代码中主要实现了判断该实例的option参数为根实例还是组件实例，以及对$option的定义，因为在之后的init*方法中都使用到该参数。</li>
+</ol>
+<h5 id="mergeOption"><a href="#mergeOption" class="headerlink" title="mergeOption"></a>mergeOption</h5><p>该方法(在core/util/options.js)作为公有方法用于合并两个option生成一个新的option，在合并过程中，以<strong><strong>child</strong></strong>为参数调用<strong><strong>checkComponents</strong></strong>方法先检测里面的属性key是否含有定义的关键字以及html保留字，例如项目初始过程中在option内会定义<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    components: &#123;</span><br><span class="line">        customHeader,</span><br><span class="line">        footer</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中检测到<strong><strong>footer</strong></strong>与html标签有冲突，就会提示warning。</p>
+<p>而后就是针对option中props属性进行规范化，在规范化的过程会出现我们在组件属性传递值时，属性名称转驼峰的写法，<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">component</span> <span class="attr">:http-request</span>=<span class="string">"url"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>那么在组件内部定义中，props需要这样写：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;</span><br><span class="line">    httpRequest: &#123;</span><br><span class="line">        type: <span class="built_in">String</span>,</span><br><span class="line">        <span class="keyword">default</span>: <span class="string">'http://blog.molychn.com'</span></span><br><span class="line">    &#125;<span class="comment">//,</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里面的转换就涉及到camelize方法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Camelize a hyphen-delimited string.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> camelizeRE = <span class="regexp">/-(\w)/g</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> camelize = cached((str: string): <span class="function"><span class="params">string</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> str.replace(camelizeRE, (_, c) =&gt; c ? c.toUpperCase() : <span class="string">''</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>整体的normalize三者格式话起来大同小异，贴一份props的：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">normalizeProps</span> (<span class="params">options: Object, vm: ?Component</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> props = options.props</span><br><span class="line">  <span class="keyword">if</span> (!props) <span class="keyword">return</span></span><br><span class="line">  <span class="keyword">const</span> res = &#123;&#125;</span><br><span class="line">  <span class="keyword">let</span> i, val, name</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(props)) &#123;</span><br><span class="line">    i = props.length</span><br><span class="line">    <span class="keyword">while</span> (i--) &#123;</span><br><span class="line">      val = props[i]</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">typeof</span> val === <span class="string">'string'</span>) &#123;</span><br><span class="line">        name = camelize(val)</span><br><span class="line">        res[name] = &#123; <span class="attr">type</span>: <span class="literal">null</span> &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">        warn(<span class="string">'props must be strings when using array syntax.'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isPlainObject(props)) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> props) &#123;</span><br><span class="line">      val = props[key]</span><br><span class="line">      name = camelize(key)</span><br><span class="line">      res[name] = isPlainObject(val)</span><br><span class="line">        ? val</span><br><span class="line">        : &#123; <span class="attr">type</span>: val &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (process.env.NODE_ENV !== <span class="string">'production'</span>) &#123;</span><br><span class="line">    warn(</span><br><span class="line">      <span class="string">`Invalid value for option "props": expected an Array or an Object, `</span> +</span><br><span class="line">      <span class="string">`but got <span class="subst">$&#123;toRawType(props)&#125;</span>.`</span>,</span><br><span class="line">      vm</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">  options.props = res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>之后规范inject，该功能在v2.2.0新增，和父组件的provide搭配使用，使得完成一个注入的功能。在父组件中，使用provide传递一个属性值：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parent</span></span><br><span class="line">&#123;</span><br><span class="line">    provide: &#123;</span><br><span class="line">        sub: <span class="string">'hello world'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// child</span></span><br><span class="line">&#123;</span><br><span class="line">    inject: [<span class="string">'sub'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为它本身也有两种写法，所以搞了个<strong><strong>normalizeInject</strong></strong>进行规范化，规范的内容简明扼要就是将它规范为对象写法，并在属性内增加一个<strong><strong>from</strong></strong>属性。</p>
+<p>最后是directives，使用<strong><strong>normalizeDirectives</strong></strong>来规范自定义指令。对于自定义指令，用户的写法可以是采用对象语法或者是直接定义一个函数，通过规范化将两种形式统一起来：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> dirs) &#123;</span><br><span class="line">  <span class="keyword">const</span> def = dirs[key]</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> def === <span class="string">'function'</span>) &#123;</span><br><span class="line">    dirs[key] = &#123; <span class="attr">bind</span>: def, <span class="attr">update</span>: def &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将三者都进行normalize规范化后，对<strong><strong>extend</strong></strong>和<strong><strong>minxins</strong></strong>进行处理，整理来说还是通过递归将这两者全部解析合并起来（<strong><strong>这里要留个坑，因为在工作中并没有过多使用这两个属性来扩展业务，后期研究完再填回来</strong></strong>）。</p>
+<p>全部完成后最为重要的环节就在于属性上的合并，Vue写了一系列strats策略规则，其中通过运行环境在非生产环境下添加<strong><strong>el</strong></strong>与<strong><strong>propsData</strong></strong>策略。</p>
+<p>To be continue.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"><i class="fa fa-tag"></i> javascript</a>
+          
+            <a href="/tags/Vue/" rel="tag"><i class="fa fa-tag"></i> Vue</a>
+          
+            <a href="/tags/source/" rel="tag"><i class="fa fa-tag"></i> source</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/30/vueAnalysis01/" rel="next" title="Vue源码学习01：构造函数与全局方法">
+                <i class="fa fa-chevron-left"></i> Vue源码学习01：构造函数与全局方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MzY5MS8yMDIzMQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Molychn</p>
+              <p class="site-description motion-element" itemprop="description">molychn</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#new一个Vue实例"><span class="nav-number">1.</span> <span class="nav-text">new一个Vue实例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Performance"><span class="nav-number">1.1.</span> <span class="nav-text">Performance</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mergeOption"><span class="nav-number">1.2.</span> <span class="nav-text">mergeOption</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Molychn</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
