@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,Vue,source,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在第二篇开始实例化一个Vue时，我们了解到Vue类封装类initMixin方法，通过new操作会执行initMixin添加在Vue原型上的_init方法，执行到mergeOption后返回一个新的option参数，之后继续开始初始化之路。">
+<meta name="keywords" content="javascript,Vue,source">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue源码学习04：initMixin后续——initProxy篇">
+<meta property="og:url" content="http://yoursite.com/2019/06/18/vueAnalysis04/index.html">
+<meta property="og:site_name" content="Molychn`s Blog">
+<meta property="og:description" content="在第二篇开始实例化一个Vue时，我们了解到Vue类封装类initMixin方法，通过new操作会执行initMixin添加在Vue原型上的_init方法，执行到mergeOption后返回一个新的option参数，之后继续开始初始化之路。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-18T01:55:12.330Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue源码学习04：initMixin后续——initProxy篇">
+<meta name="twitter:description" content="在第二篇开始实例化一个Vue时，我们了解到Vue类封装类initMixin方法，通过new操作会执行initMixin添加在Vue原型上的_init方法，执行到mergeOption后返回一个新的option参数，之后继续开始初始化之路。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/18/vueAnalysis04/">
+
+
+
+
+
+  <title>Vue源码学习04：initMixin后续——initProxy篇 | Molychn`s Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Molychn`s Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">molychn的个人站点</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/18/vueAnalysis04/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Molychn">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Molychn`s Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue源码学习04：initMixin后续——initProxy篇</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-18T09:53:51+08:00">
+                2019-06-18
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-06-18T09:55:12+08:00">
+                2019-06-18
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/计算机科学/" itemprop="url" rel="index">
+                    <span itemprop="name">计算机科学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在第二篇开始实例化一个Vue时，我们了解到Vue类封装类initMixin方法，通过new操作会执行initMixin添加在Vue原型上的_init方法，执行到mergeOption后返回一个新的option参数，之后继续开始初始化之路。<br><a id="more"></a></p>
+<p>首先根据当前环境给vm添加_renderProxy属性，在非生产环境下需要对该属性添加代理用于检测render过程中出现未定义的变量错误，在/core/instance/proxy.js中，关于initProxy的方法是这样写的，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">initProxy = <span class="function"><span class="keyword">function</span> <span class="title">initProxy</span> (<span class="params">vm</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (hasProxy) &#123;</span><br><span class="line">        <span class="comment">// determine which proxy handler to use</span></span><br><span class="line">        <span class="keyword">const</span> options = vm.$options</span><br><span class="line">        <span class="keyword">const</span> handlers = options.render &amp;&amp; options.render._withStripped</span><br><span class="line">        ? getHandler</span><br><span class="line">        : hasHandler</span><br><span class="line">        vm._renderProxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(vm, handlers)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        vm._renderProxy = vm</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>先判断是否存在proxy，这是由宿主环境下原生proxy所支持的<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// core/util/env.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isNative</span> (<span class="params">Ctor: any</span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">typeof</span> Ctor === <span class="string">'function'</span> &amp;&amp; <span class="regexp">/native code/</span>.test(Ctor.toString())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// core/instance/proxy.js</span></span><br><span class="line"><span class="keyword">const</span> hasProxy = <span class="keyword">typeof</span> <span class="built_in">Proxy</span> !== <span class="string">'undefined'</span> &amp;&amp; isNative(<span class="built_in">Proxy</span>)</span><br></pre></td></tr></table></figure></p>
+<p>判断到hasProxy为true，即运行环境存在proxy的情况下，根据options内的render属性与render._withStripped来决定使用哪种代理方式。两种方式都在同个文件中，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> hasHandler = &#123;</span><br><span class="line">    has (target, key) &#123;</span><br><span class="line">        <span class="keyword">const</span> has = key <span class="keyword">in</span> target</span><br><span class="line">        <span class="keyword">const</span> isAllowed = allowedGlobals(key) || (<span class="keyword">typeof</span> key === <span class="string">'string'</span> &amp;&amp; key.charAt(<span class="number">0</span>) === <span class="string">'_'</span> &amp;&amp; !(key <span class="keyword">in</span> target.$data))</span><br><span class="line">        <span class="keyword">if</span> (!has &amp;&amp; !isAllowed) &#123;</span><br><span class="line">            <span class="keyword">if</span> (key <span class="keyword">in</span> target.$data) warnReservedPrefix(target, key)</span><br><span class="line">            <span class="keyword">else</span> warnNonPresent(target, key)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> has || !isAllowed</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> getHandler = &#123;</span><br><span class="line">    <span class="keyword">get</span> (target, key) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> key === <span class="string">'string'</span> &amp;&amp; !(key <span class="keyword">in</span> target)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (key <span class="keyword">in</span> target.$data) warnReservedPrefix(target, key)</span><br><span class="line">            <span class="keyword">else</span> warnNonPresent(target, key)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> target[key]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这两者的区别就在于<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy" target="_blank" rel="noopener">proxy</a>采用的拦截不同，其基本概念不在这过多描述。采用has添加proxy，它能拦截到的几个操作：</p>
+<ol>
+<li>属性查询：foo in proxy</li>
+<li>继承属性查询：foo in Object.create(proxy)</li>
+<li>with检查：with(proxy) {(foo);}</li>
+<li>Reflect.has()</li>
+</ol>
+<p>上述的has拦截首先判断key是否存在目标对象中，而后判断该key是否在allowedGlobals所包含的关键字中或key为以下划线开头的字符串，在目标对象的$data属性中不存在，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> isAllowed = allowedGlobals(key) || (<span class="keyword">typeof</span> key === <span class="string">'string'</span> &amp;&amp; key.charAt(<span class="number">0</span>) === <span class="string">'_'</span> &amp;&amp; !(key <span class="keyword">in</span> target.$data))</span><br></pre></td></tr></table></figure></p>
+<p>如果不存在也不允许，则根据目标对象的$data中是否包含该key来提示不同的警告，warnReservedPrefix指的是滥用关键保留前缀，warnNonPresent指的则是该属性在实例中未定义。最后return结果。</p>
+<p>而get拦截相对简单，判断key类型已经是否在目标对象内，而后再根据$data来决定警告内容，最后将值return。</p>
+<p>基本上initProxy的处理就是为了规范在开发过程中添加属性、保留字使用的错误规范等，在整个proxy中，起到关键的在于allowedGlobals、warnReservedPrefix、warnNonPresent三者中。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> allowedGlobals = makeMap(</span><br><span class="line">    <span class="string">'Infinity,undefined,NaN,isFinite,isNaN,'</span> +</span><br><span class="line">    <span class="string">'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,'</span> +</span><br><span class="line">    <span class="string">'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,'</span> +</span><br><span class="line">    <span class="string">'require'</span> <span class="comment">// for Webpack/Browserify</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> warnNonPresent = <span class="function">(<span class="params">target, key</span>) =&gt;</span> &#123;</span><br><span class="line">    warn(</span><br><span class="line">        <span class="string">`Property or method "<span class="subst">$&#123;key&#125;</span>" is not defined on the instance but `</span> +</span><br><span class="line">        <span class="string">'referenced during render. Make sure that this property is reactive, '</span> +</span><br><span class="line">        <span class="string">'either in the data option, or for class-based components, by '</span> +</span><br><span class="line">        <span class="string">'initializing the property. '</span> +</span><br><span class="line">        <span class="string">'See: https://vuejs.org/v2/guide/reactivity.html#Declaring-Reactive-Properties.'</span>,</span><br><span class="line">        target</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> warnReservedPrefix = <span class="function">(<span class="params">target, key</span>) =&gt;</span> &#123;</span><br><span class="line">    warn(</span><br><span class="line">        <span class="string">`Property "<span class="subst">$&#123;key&#125;</span>" must be accessed with "$data.<span class="subst">$&#123;key&#125;</span>" because `</span> +</span><br><span class="line">        <span class="string">'properties starting with "$" or "_" are not proxied in the Vue instance to '</span> +</span><br><span class="line">        <span class="string">'prevent conflicts with Vue internals'</span> +</span><br><span class="line">        <span class="string">'See: https://vuejs.org/v2/api/#data'</span>,</span><br><span class="line">        target</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中allowedGlobals是由makeMap方法生成的新函数，在/share/util.js中makeMap根据用户输入的字符串与大小写require值生成新函数，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Make a map and return a function for checking if a key</span></span><br><span class="line"><span class="comment"> * is in that map.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">makeMap</span> (<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">  str: string,</span></span></span><br><span class="line"><span class="function"><span class="params">  expectsLowerCase?: boolean</span></span></span><br><span class="line"><span class="function"><span class="params"></span>): (<span class="params">key: string</span>) =&gt; <span class="title">true</span> | <span class="title">void</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> map = <span class="built_in">Object</span>.create(<span class="literal">null</span>)</span><br><span class="line">  <span class="keyword">const</span> list: <span class="built_in">Array</span>&lt;string&gt; = str.split(<span class="string">','</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; list.length; i++) &#123;</span><br><span class="line">    map[list[i]] = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> expectsLowerCase</span><br><span class="line">    ? <span class="function"><span class="params">val</span> =&gt;</span> map[val.toLowerCase()]</span><br><span class="line">    : <span class="function"><span class="params">val</span> =&gt;</span> map[val]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在整个proxy文件中，除了需要导出的initProxy，有个步骤是根据是否有原生代理运行，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (hasProxy) &#123;</span><br><span class="line">    <span class="keyword">const</span> isBuiltInModifier = makeMap(<span class="string">'stop,prevent,self,ctrl,shift,alt,meta,exact'</span>)</span><br><span class="line">    config.keyCodes = <span class="keyword">new</span> <span class="built_in">Proxy</span>(config.keyCodes, &#123;</span><br><span class="line">        <span class="keyword">set</span> (target, key, value) &#123;</span><br><span class="line">            <span class="keyword">if</span> (isBuiltInModifier(key)) &#123;</span><br><span class="line">                warn(<span class="string">`Avoid overwriting built-in modifier in config.keyCodes: .<span class="subst">$&#123;key&#125;</span>`</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                target[key] = value</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>isBuiltInModifier创建一套内置修饰符，该函数用来检测给定的值是否是内置的事件修饰符，后面给keyCodes添加set代理，防止开发时自定义键位别名覆盖了内置修饰符。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"><i class="fa fa-tag"></i> javascript</a>
+          
+            <a href="/tags/Vue/" rel="tag"><i class="fa fa-tag"></i> Vue</a>
+          
+            <a href="/tags/source/" rel="tag"><i class="fa fa-tag"></i> source</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/13/vueAnalysis03/" rel="next" title="Vue源码学习03：Strats合并策略">
+                <i class="fa fa-chevron-left"></i> Vue源码学习03：Strats合并策略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MzY5MS8yMDIzMQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Molychn</p>
+              <p class="site-description motion-element" itemprop="description">molychn</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Molychn</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
